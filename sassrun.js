@@ -4,6 +4,7 @@
  |--------------------------------------------------------------------------
  */
 var sass = require('node-sass');
+var sassglob = require('node-sass-globbing');
 var glob = require("glob");
 var mkdirp = require('mkdirp');
 var path = require('path');
@@ -21,7 +22,7 @@ var sassrun = {
 		sassrun.glob();
 	},
 	glob: function () {
-		glob(settings.INPUT_PATH + "/**/*.scss", function (er, files) {
+		glob(settings.INPUT_PATH + "/**/*.scss", { ignore: "./**/_*.scss" }, function (er, files) {
 			if (er != null) { console.log("err:glob");console.error(er); return; }
 			sassrun.mkdir(files);
 		});
@@ -43,6 +44,7 @@ var sassrun = {
 				val.replace(settings.INPUT_PATH, "").replace(/(.*\/.*\.)scss/, "$1css");
 		sass.render({
 			file: val,
+			importer: [ sassglob ],
 			outFile: outName,
 			outputStyle: settings.OUTPUT_STYLE,
 			sourceComments: settings.SOURCE_COMMENTS,
